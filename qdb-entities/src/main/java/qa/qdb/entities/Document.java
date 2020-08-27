@@ -11,6 +11,7 @@ public class Document {
     
     private String submitter;
     private String filename;
+    private String uuid;
     
     private Blob content;
 
@@ -47,5 +48,13 @@ public class Document {
 
     public void setContent(Blob content) {
         this.content = content;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }
