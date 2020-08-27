@@ -34,7 +34,7 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart("/upload")
+        mvc.perform(multipart("/document/upload")
                 .file(uploadFile)
                 .param("submitter", "philip"))
                 .andExpect(status().isOk())
@@ -51,7 +51,7 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart("/upload")
+        mvc.perform(multipart("/document/upload")
                 .file(uploadFile))
                 .andExpect(status().isBadRequest());
     }
@@ -64,7 +64,7 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart("/upload")
+        mvc.perform(multipart("/document/upload")
                 .file(uploadFile)
                 .param("submitter", "philip"))
                 .andExpect(status().isUnsupportedMediaType());
@@ -78,7 +78,7 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart("/upload")
+        mvc.perform(multipart("/document/upload")
                 .file(uploadFile)
                 .param("submitter", "philip"))
                 .andExpect(status().isUnsupportedMediaType());
