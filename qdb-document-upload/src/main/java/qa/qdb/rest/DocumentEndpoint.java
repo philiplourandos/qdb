@@ -1,8 +1,78 @@
 package qa.qdb.rest;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.UUID;
+import javax.sql.rowset.serial.SerialBlob;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import qa.qdb.entities.Document;
+import qa.qdb.model.UploadedDocument;
+import qa.qdb.repository.DocumentRepository;
 
 @RestController
+@RequestMapping("/document")
 public class DocumentEndpoint {
-    
+    private static final Logger LOG = LogManager.getLogger(DocumentEndpoint.class);
+
+    private static final String PDF_EXTENSION = ".pdf";
+
+    private final DocumentRepository docRepo;
+
+    public DocumentEndpoint(DocumentRepository docRepo) {
+        this.docRepo = docRepo;
+    }
+            
+    @PostMapping("/upload")
+    public ResponseEntity add(@RequestParam final MultipartFile upload, 
+            @RequestParam("submitter") @NonNull final String submitter) {
+        final String filename = upload.getOriginalFilename();
+
+        if (!filename.toLowerCase().endsWith(PDF_EXTENSION)) {
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+        }
+
+        try {
+            final String mimeType = Files.probeContentType(Path.of(upload.getResource().getURI()));
+
+            if (!MediaType.APPLICATION_PDF_VALUE.equals(mimeType)) {
+                return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+            }
+        } catch (IOException io) {
+            LOG.error("Failed attempting to determine mime type of the uploaded file", io);
+
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+        }
+
+        try {
+            final byte[] documentContent = Files.readAllBytes(Path.of(upload.getResource().getURI()));
+            final Blob content = new SerialBlob(documentContent);
+
+            final Document newDoc = new Document();
+            newDoc.setSubmitter(submitter);
+            newDoc.setFilename(filename);
+            newDoc.setContent(content);
+            newDoc.setUuid(UUID.randomUUID().toString());
+
+            docRepo.save(newDoc);
+
+            return ResponseEntity.ok(new UploadedDocument(newDoc.getUuid()));
+        } catch(IOException | SQLException io) {
+            LOG.error("Unable to persist uploaded document to database", io);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
