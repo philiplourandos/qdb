@@ -9,7 +9,15 @@
         <module>qdb-document-upload</module>
         <module>qdb-cms</module>
         <module>qdb-db</module>
+        <module>qdb-entities</module>
+        <module>qdb-repository</module>
     </modules>
+    
+    <properties>
+        <java.version>14</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
