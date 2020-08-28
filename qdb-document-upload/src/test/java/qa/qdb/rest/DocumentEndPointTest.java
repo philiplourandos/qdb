@@ -29,13 +29,14 @@ public class DocumentEndPointTest {
     public void givenAPdfForUpload_whenSubmitted_thenSuccessfullySaveDocument() throws Exception {
         //given
         final Resource uploadResource = new ClassPathResource("documents/valid.pdf");
-        final MockMultipartFile uploadFile = new MockMultipartFile("data", 
+        final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
                 uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
                 uploadResource.getInputStream());
 
         //when
         mvc.perform(multipart("/document/upload")
                 .file(uploadFile)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .param("submitter", "philip"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uuid").isString())
@@ -46,26 +47,28 @@ public class DocumentEndPointTest {
     public void givenAValidPdfFile_whenUploadedWithNoSubmitter_theFailWithBadRequest() throws Exception {
         //given
         final Resource uploadResource = new ClassPathResource("documents/valid.pdf");
-        final MockMultipartFile uploadFile = new MockMultipartFile("data", 
-                uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
-                uploadResource.getInputStream());
-
-        //when
-        mvc.perform(multipart("/document/upload")
-                .file(uploadFile))
-                .andExpect(status().isBadRequest());
-    }
-    
-    @Test
-    public void givenATxtFileForUpload_whenSubmitted_thenFailWith415() throws Exception {
-        final Resource uploadResource = new ClassPathResource("documents/invalid-file.txt");
-        final MockMultipartFile uploadFile = new MockMultipartFile("data", 
+        final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
                 uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
                 uploadResource.getInputStream());
 
         //when
         mvc.perform(multipart("/document/upload")
                 .file(uploadFile)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM))
+                .andExpect(status().isBadRequest());
+    }
+    
+    @Test
+    public void givenATxtFileForUpload_whenSubmitted_thenFailWith415() throws Exception {
+        final Resource uploadResource = new ClassPathResource("documents/invalid-file.txt");
+        final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
+                uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
+                uploadResource.getInputStream());
+
+        //when
+        mvc.perform(multipart("/document/upload")
+                .file(uploadFile)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .param("submitter", "philip"))
                 .andExpect(status().isUnsupportedMediaType());
     }
@@ -73,13 +76,14 @@ public class DocumentEndPointTest {
     @Test
     public void givenAPdFileIncorrectlyNamed_whenSubmitted_thenFailWith415() throws Exception {
         final Resource uploadResource = new ClassPathResource("documents/invalid-extension.ps");
-        final MockMultipartFile uploadFile = new MockMultipartFile("data", 
+        final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
                 uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
                 uploadResource.getInputStream());
 
         //when
         mvc.perform(multipart("/document/upload")
                 .file(uploadFile)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .param("submitter", "philip"))
                 .andExpect(status().isUnsupportedMediaType());
     }
