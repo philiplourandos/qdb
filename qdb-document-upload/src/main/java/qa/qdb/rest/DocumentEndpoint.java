@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,7 +80,7 @@ public class DocumentEndpoint {
         }
     }
 
-    @GetMapping("/{submitter}")
+    @GetMapping("/submitter/{submitter}")
     public ResponseEntity getDocumentsForSubmitter(@PathVariable("submitter") final String submitter) {
         final List<Document> docs = docRepo.findBySubmitter(submitter);
 
@@ -89,4 +90,5 @@ public class DocumentEndpoint {
             return ResponseEntity.ok(new DocumentsResponse(docs));
         }
     }
+    
 }
