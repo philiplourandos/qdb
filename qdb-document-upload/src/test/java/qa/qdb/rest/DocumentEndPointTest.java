@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import qa.qdb.entities.Document;
+import qa.qdb.model.UploadedDocument;
 import qa.qdb.repository.DocumentRepository;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,7 +25,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import qa.qdb.model.UploadedDocument;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -64,7 +64,7 @@ public class DocumentEndPointTest {
         //then
         final UploadedDocument reponse = mapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
                 UploadedDocument.class);
-        
+
         final List<Document> savedDocs = docRepo.findBySubmitter(submitter);
         assertNotNull(savedDocs);
         assertEquals(1, savedDocs.size());
@@ -108,6 +108,21 @@ public class DocumentEndPointTest {
     @Test
     public void givenAPdFileIncorrectlyNamed_whenSubmitted_thenFailWith415() throws Exception {
         final Resource uploadResource = new ClassPathResource("documents/invalid-extension.ps");
+        final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
+                uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
+                uploadResource.getInputStream());
+
+        //when
+        mvc.perform(multipart("/document/upload")
+                .file(uploadFile)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .param("submitter", "philip"))
+                .andExpect(status().isUnsupportedMediaType());
+    }
+    
+    @Test
+    public void givenAInvalidFileNamedWithPdfExtension_whenSubmitted_thenFailWith415() throws Exception {
+        final Resource uploadResource = new ClassPathResource("documents/invalid-content-type.pdf");
         final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
                 uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
                 uploadResource.getInputStream());
