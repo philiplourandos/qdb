@@ -66,26 +66,23 @@ public class DocumentEndpoint {
         }
 
         try {
-            final byte[] documentContent = upload.getBytes();
-            final Blob content = new SerialBlob(documentContent);
-
             final Document newDoc = new Document();
             newDoc.setSubmitter(submitter);
             newDoc.setFilename(filename);
-            newDoc.setContent(content);
+            newDoc.setContent(upload.getBytes());
             newDoc.setUuid(UUID.randomUUID().toString());
 
             docRepo.save(newDoc);
 
             return ResponseEntity.ok(new UploadedDocument(newDoc.getUuid()));
-        } catch(IOException | SQLException io) {
+        } catch(IOException io) {
             LOG.error("Unable to persist uploaded document to database", io);
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("/${submitter}")
+    @GetMapping("/{submitter}")
     public ResponseEntity getDocumentsForSubmitter(@PathVariable("submitter") final String submitter) {
         final List<Document> docs = docRepo.findBySubmitter(submitter);
 
