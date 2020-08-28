@@ -1,6 +1,5 @@
 package qa.qdb.entities;
 
-import java.sql.Blob;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -13,7 +12,7 @@ public class Document {
     private String filename;
     private String uuid;
     
-    private Blob content;
+    private byte[] content;
 
     public Document() {
     }
@@ -42,11 +41,11 @@ public class Document {
         this.filename = filename;
     }
 
-    public Blob getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Blob content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 
