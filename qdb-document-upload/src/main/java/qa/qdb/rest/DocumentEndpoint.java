@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 import javax.sql.rowset.serial.SerialBlob;
 import org.apache.logging.log4j.LogManager;
@@ -14,12 +15,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import qa.qdb.entities.Document;
+import qa.qdb.model.DocumentsResponse;
 import qa.qdb.model.UploadedDocument;
 import qa.qdb.repository.DocumentRepository;
 
@@ -48,7 +52,7 @@ public class DocumentEndpoint {
         try {
             final Path tmpFile = Files.createTempFile("file-upload", ".tmp");
             Files.write(tmpFile, upload.getBytes());
-            
+
             final Tika tika = new Tika();
             final String mimeType = tika.detect(tmpFile);
 
@@ -78,6 +82,17 @@ public class DocumentEndpoint {
             LOG.error("Unable to persist uploaded document to database", io);
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/${submitter}")
+    public ResponseEntity getDocumentsForSubmitter(@PathVariable("submitter") final String submitter) {
+        final List<Document> docs = docRepo.findBySubmitter(submitter);
+
+        if (docs.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(new DocumentsResponse(docs));
         }
     }
 }
