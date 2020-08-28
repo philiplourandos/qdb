@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.sql.rowset.serial.SerialBlob;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tika.Tika;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,11 @@ public class DocumentEndpoint {
         }
 
         try {
-            final String mimeType = Files.probeContentType(Path.of(upload.getResource().getURI()));
+            final Path tmpFile = Files.createTempFile("file-upload", ".tmp");
+            Files.write(tmpFile, upload.getBytes());
+            
+            final Tika tika = new Tika();
+            final String mimeType = tika.detect(tmpFile);
 
             if (!MediaType.APPLICATION_PDF_VALUE.equals(mimeType)) {
                 return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
@@ -53,11 +58,11 @@ public class DocumentEndpoint {
         } catch (IOException io) {
             LOG.error("Failed attempting to determine mime type of the uploaded file", io);
 
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         try {
-            final byte[] documentContent = Files.readAllBytes(Path.of(upload.getResource().getURI()));
+            final byte[] documentContent = upload.getBytes();
             final Blob content = new SerialBlob(documentContent);
 
             final Document newDoc = new Document();
