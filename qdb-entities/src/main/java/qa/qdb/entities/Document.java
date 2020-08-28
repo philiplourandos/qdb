@@ -4,7 +4,7 @@ import java.sql.Blob;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table("document")
+@Table("DOCUMENT")
 public class Document {
     @Id
     private Long id;
