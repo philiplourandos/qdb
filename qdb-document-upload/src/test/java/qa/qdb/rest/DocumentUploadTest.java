@@ -15,13 +15,15 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import qa.qdb.entities.Document;
 import qa.qdb.model.UploadedDocument;
 import qa.qdb.repository.DocumentRepository;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.annotation.DirtiesContext;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,12 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class DocumentEndPointTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+public class DocumentUploadTest {
 
     private static final Pattern UUID_REGEX = Pattern.compile("\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}");
-    private static final String SUBMITTER = "philip";
-    private static final String PARAM_SUBMITTER = "submitter";
-    private static final String ENDPOINT_DOCUMENT_UPLOAD_URL = "/document/upload";
     
     @Autowired
     private MockMvc mvc;
@@ -54,10 +54,10 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        final MvcResult result = mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
+        final MvcResult result = mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param(PARAM_SUBMITTER, SUBMITTER))
+                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uuid").isString())
                 .andExpect(jsonPath("$.uuid").value(Matchers.matchesRegex(UUID_REGEX)))
@@ -67,12 +67,12 @@ public class DocumentEndPointTest {
         final UploadedDocument reponse = mapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
                 UploadedDocument.class);
 
-        final List<Document> savedDocs = docRepo.findBySubmitter(SUBMITTER);
+        final List<Document> savedDocs = docRepo.findBySubmitter(TestConst.SUBMITTER);
         assertNotNull(savedDocs);
         assertEquals(1, savedDocs.size());
 
         final Document savedDoc = savedDocs.get(0);
-        assertEquals(SUBMITTER, savedDoc.getSubmitter());
+        assertEquals(TestConst.SUBMITTER, savedDoc.getSubmitter());
         assertEquals(uploadResource.getFilename(), savedDoc.getFilename());
         assertEquals(reponse.getUuid(), savedDoc.getUuid());
     }
@@ -86,7 +86,7 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
+        mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM))
                 .andExpect(status().isBadRequest());
@@ -101,10 +101,10 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
+        mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param(PARAM_SUBMITTER, SUBMITTER))
+                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER))
                 .andExpect(status().isUnsupportedMediaType());
     }
 
@@ -117,10 +117,10 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
+        mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param(PARAM_SUBMITTER, SUBMITTER))
+                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER))
                 .andExpect(status().isUnsupportedMediaType());
     }
     
@@ -133,10 +133,10 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
+        mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param(PARAM_SUBMITTER, SUBMITTER))
+                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER))
                 .andExpect(status().isUnsupportedMediaType());
     }
 }
