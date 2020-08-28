@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,5 +92,19 @@ public class DocumentEndpoint {
             return ResponseEntity.ok(new DocumentsResponse(docs));
         }
     }
-    
+
+    @DeleteMapping("/gprs/{submitter}/{uuid}")
+    @Transactional
+    public ResponseEntity removeDocument(@NonNull @PathVariable("submitter") final String submitter, 
+            @NonNull @PathVariable("uuid") final String uuid) {
+        final Optional<Document> found = docRepo.findBySubmitterAndUuid(submitter, uuid);
+
+        found.ifPresent(doc -> docRepo.deleteById(doc.getId()));
+
+        if(found.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok().build();
+        }
+    }
 }
