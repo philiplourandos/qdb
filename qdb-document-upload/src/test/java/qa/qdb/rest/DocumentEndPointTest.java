@@ -32,6 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DocumentEndPointTest {
 
     private static final Pattern UUID_REGEX = Pattern.compile("\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}");
+    private static final String SUBMITTER = "philip";
+    private static final String PARAM_SUBMITTER = "submitter";
+    private static final String ENDPOINT_DOCUMENT_UPLOAD_URL = "/document/upload";
     
     @Autowired
     private MockMvc mvc;
@@ -45,17 +48,16 @@ public class DocumentEndPointTest {
     @Test
     public void givenAPdfForUpload_whenSubmitted_thenSuccessfullySaveDocument() throws Exception {
         //given
-        final String submitter = "philip";
         final Resource uploadResource = new ClassPathResource("documents/valid.pdf");
         final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
                 uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
                 uploadResource.getInputStream());
 
         //when
-        final MvcResult result = mvc.perform(multipart("/document/upload")
+        final MvcResult result = mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param("submitter", submitter))
+                .param(PARAM_SUBMITTER, SUBMITTER))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uuid").isString())
                 .andExpect(jsonPath("$.uuid").value(Matchers.matchesRegex(UUID_REGEX)))
@@ -65,12 +67,12 @@ public class DocumentEndPointTest {
         final UploadedDocument reponse = mapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
                 UploadedDocument.class);
 
-        final List<Document> savedDocs = docRepo.findBySubmitter(submitter);
+        final List<Document> savedDocs = docRepo.findBySubmitter(SUBMITTER);
         assertNotNull(savedDocs);
         assertEquals(1, savedDocs.size());
 
         final Document savedDoc = savedDocs.get(0);
-        assertEquals(submitter, savedDoc.getSubmitter());
+        assertEquals(SUBMITTER, savedDoc.getSubmitter());
         assertEquals(uploadResource.getFilename(), savedDoc.getFilename());
         assertEquals(reponse.getUuid(), savedDoc.getUuid());
     }
@@ -84,7 +86,7 @@ public class DocumentEndPointTest {
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart("/document/upload")
+        mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM))
                 .andExpect(status().isBadRequest());
@@ -92,46 +94,49 @@ public class DocumentEndPointTest {
     
     @Test
     public void givenATxtFileForUpload_whenSubmitted_thenFailWith415() throws Exception {
+        //given
         final Resource uploadResource = new ClassPathResource("documents/invalid-file.txt");
         final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
                 uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart("/document/upload")
+        mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param("submitter", "philip"))
+                .param(PARAM_SUBMITTER, SUBMITTER))
                 .andExpect(status().isUnsupportedMediaType());
     }
 
     @Test
     public void givenAPdFileIncorrectlyNamed_whenSubmitted_thenFailWith415() throws Exception {
+        //given
         final Resource uploadResource = new ClassPathResource("documents/invalid-extension.ps");
         final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
                 uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart("/document/upload")
+        mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param("submitter", "philip"))
+                .param(PARAM_SUBMITTER, SUBMITTER))
                 .andExpect(status().isUnsupportedMediaType());
     }
     
     @Test
     public void givenAInvalidFileNamedWithPdfExtension_whenSubmitted_thenFailWith415() throws Exception {
+        //given
         final Resource uploadResource = new ClassPathResource("documents/invalid-content-type.pdf");
         final MockMultipartFile uploadFile = new MockMultipartFile("upload", 
                 uploadResource.getFilename(), MediaType.APPLICATION_PDF_VALUE,
                 uploadResource.getInputStream());
 
         //when
-        mvc.perform(multipart("/document/upload")
+        mvc.perform(multipart(ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param("submitter", "philip"))
+                .param(PARAM_SUBMITTER, SUBMITTER))
                 .andExpect(status().isUnsupportedMediaType());
     }
 }
