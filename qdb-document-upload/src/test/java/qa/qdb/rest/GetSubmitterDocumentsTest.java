@@ -15,9 +15,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import qa.qdb.entities.Document;
 import qa.qdb.model.DocumentsResponse;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -59,6 +62,11 @@ public class GetSubmitterDocumentsTest {
 
         final DocumentsResponse response = mapper.readValue(result.getResponse().getContentAsString(
                 StandardCharsets.UTF_8), DocumentsResponse.class);
-        
+        final Document saved = response.getDocuments().get(0);
+        assertNotNull(saved.getId());
+        assertNotNull(saved.getUuid());
+        assertNotNull(saved.getContent());
+        assertEquals("valid.pdf", saved.getFilename());
+        assertEquals(TestConst.SUBMITTER, saved.getSubmitter());
     }
 }
