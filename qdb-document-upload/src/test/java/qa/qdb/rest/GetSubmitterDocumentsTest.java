@@ -69,4 +69,11 @@ public class GetSubmitterDocumentsTest {
         assertEquals("valid.pdf", saved.getFilename());
         assertEquals(TestConst.SUBMITTER, saved.getSubmitter());
     }
+
+    @Test
+    public void givenNonExistantSubmitterName_whenSubmitted_thenReturnA404() throws Exception {
+        mvc.perform(get(String.format(
+                    TestConst.ENDPOINT_GET_DOCUMENTS_URL, "larry.laffer")))
+                .andExpect(status().isNotFound());
+    }
 }
