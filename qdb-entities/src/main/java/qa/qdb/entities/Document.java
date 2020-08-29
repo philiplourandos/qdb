@@ -9,7 +9,7 @@ public class Document {
     @Id
     private Long id;
     
-    @Column("post_id")
+    @Column("POST_ID")
     private Long postId;
     private Long submitter;
 
