@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import qa.qdb.client.model.Comment;
 import qa.qdb.client.model.NewPostRequest;
 import qa.qdb.client.model.PostResponse;
 
@@ -17,4 +18,7 @@ public interface PlaceholderClient {
 
     @GetMapping(path = "/posts/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     PostResponse getPost(@PathVariable("id") long id);
+
+    @PostMapping(path = "/comments", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    Comment createComment(@RequestBody Comment comment);
 }
