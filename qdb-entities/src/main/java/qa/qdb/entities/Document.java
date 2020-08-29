@@ -1,6 +1,7 @@
 package qa.qdb.entities;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("DOCUMENT")
@@ -8,6 +9,9 @@ public class Document {
     @Id
     private Long id;
     
+    @Column("post_id")
+    private Long postId;
+
     private String submitter;
     private String filename;
     private String uuid;
@@ -55,5 +59,13 @@ public class Document {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 }
