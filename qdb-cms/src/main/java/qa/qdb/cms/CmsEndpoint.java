@@ -46,7 +46,16 @@ public class CmsEndpoint {
 
     @GetMapping("/post/{documentId}")
     public ResponseEntity getPost(@PathVariable("documentId") Long documentId) {
-        
+        final Optional<Document> found = docRepo.findById(documentId);
+
+        if (found.isPresent()) {
+            final Document doc = found.get();
+
+            final PostResponse post = cmsClient.getPost(doc.getPostId());
+
+            return ResponseEntity.ok(post);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
-    
 }
