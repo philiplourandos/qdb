@@ -11,7 +11,6 @@
         <module>qdb-db</module>
         <module>qdb-entities</module>
         <module>qdb-repository</module>
-        <module>qdb-client-document-upload</module>
         <module>qdb-client-placeholder</module>
     </modules>
     
