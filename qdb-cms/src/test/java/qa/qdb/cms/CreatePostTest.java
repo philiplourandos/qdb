@@ -10,8 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import qa.qdb.client.model.NewPostRequest;
 import qa.qdb.client.model.PostResponse;
 import qa.qdb.client.placeholder.PlaceholderClient;
@@ -25,6 +23,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -58,11 +58,11 @@ public class CreatePostTest {
         when(mockClient.createPost(any(NewPostRequest.class))).thenReturn(mockedRepsonse);
 
         //when
-        mvc.perform(MockMvcRequestBuilders.post(
+        mvc.perform(post(
                 String.format(TestConst.ENDPOINT_CREATE_POST, foundDoc.getId().toString()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestContent))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(status().isCreated());
 
         //then
         final Optional<Document> updatedDoc = docRepo.findById(foundDoc.getId());
@@ -82,11 +82,11 @@ public class CreatePostTest {
         when(mockClient.createPost(any(NewPostRequest.class))).thenReturn(mockedRepsonse);
 
         //when
-        mvc.perform(MockMvcRequestBuilders.post(
+        mvc.perform(post(
                 String.format(TestConst.ENDPOINT_CREATE_POST, "9110990990"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestContent))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(status().isNotFound());
 
         //then
         verify(mockClient, never()).createPost(any(NewPostRequest.class));
