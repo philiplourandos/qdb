@@ -73,7 +73,7 @@ public class GetSubmitterDocumentsTest {
     @Test
     public void givenNonExistantSubmitterName_whenSubmitted_thenReturnA404() throws Exception {
         mvc.perform(get(String.format(
-                    TestConst.ENDPOINT_GET_DOCUMENTS_URL, "larry.laffer")))
+                    TestConst.ENDPOINT_GET_DOCUMENTS_URL, "888")))
                 .andExpect(status().isNotFound());
     }
 }
