@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import qa.qdb.client.model.Comment;
 import qa.qdb.client.model.NewPostRequest;
 import qa.qdb.client.model.PostResponse;
 import qa.qdb.client.placeholder.PlaceholderClient;
@@ -29,7 +31,7 @@ public class CmsEndpoint {
     @PostMapping("/post/{documentId}")
     public ResponseEntity createPost(@PathVariable("documentId") Long documentId, @RequestBody NewPostRequest post) {
         final Optional<Document> savedDoc = docRepo.findById(documentId);
-        
+
         if (savedDoc.isPresent()) {
             final PostResponse created = cmsClient.createPost(post);
             final Document requiredDoc = savedDoc.get();
@@ -57,5 +59,11 @@ public class CmsEndpoint {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @PostMapping("/comment")
+    @ResponseStatus(HttpStatus.OK)
+    public void createComment(@RequestBody Comment comment) {
+        cmsClient.createComment(comment);
     }
 }
