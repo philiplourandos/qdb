@@ -47,7 +47,7 @@ public class GetSubmitterDocumentsTest {
         mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER))
+                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER.toString()))
                 .andExpect(status().isOk());
     }
 

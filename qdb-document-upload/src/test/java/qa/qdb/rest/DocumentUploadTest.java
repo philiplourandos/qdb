@@ -57,7 +57,7 @@ public class DocumentUploadTest {
         final MvcResult result = mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER))
+                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uuid").isString())
                 .andExpect(jsonPath("$.uuid").value(Matchers.matchesRegex(UUID_REGEX)))
@@ -104,7 +104,7 @@ public class DocumentUploadTest {
         mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER))
+                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER.toString()))
                 .andExpect(status().isUnsupportedMediaType());
     }
 
@@ -120,7 +120,7 @@ public class DocumentUploadTest {
         mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER))
+                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER.toString()))
                 .andExpect(status().isUnsupportedMediaType());
     }
     
@@ -136,7 +136,7 @@ public class DocumentUploadTest {
         mvc.perform(multipart(TestConst.ENDPOINT_DOCUMENT_UPLOAD_URL)
                 .file(uploadFile)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER))
+                .param(TestConst.PARAM_SUBMITTER, TestConst.SUBMITTER.toString()))
                 .andExpect(status().isUnsupportedMediaType());
     }
 }

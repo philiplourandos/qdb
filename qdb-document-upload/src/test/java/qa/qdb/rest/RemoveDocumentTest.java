@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import qa.qdb.entities.Document;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -44,7 +43,7 @@ public class RemoveDocumentTest {
 
     @BeforeEach
     public void setup() throws Exception {
-        validUuid = createDocument(TestConst.SUBMITTER);
+        validUuid = createDocument(TestConst.SUBMITTER.toString());
     }
 
     private String createDocument(final String submitter) throws Exception {

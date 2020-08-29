@@ -11,8 +11,8 @@ public class Document {
     
     @Column("post_id")
     private Long postId;
+    private Long submitter;
 
-    private String submitter;
     private String filename;
     private String uuid;
     
@@ -29,11 +29,11 @@ public class Document {
         this.id = id;
     }
 
-    public String getSubmitter() {
+    public Long getSubmitter() {
         return submitter;
     }
 
-    public void setSubmitter(String submitter) {
+    public void setSubmitter(Long submitter) {
         this.submitter = submitter;
     }
 

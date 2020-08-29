@@ -7,7 +7,7 @@ import qa.qdb.entities.Document;
 
 public interface DocumentRepository extends CrudRepository<Document, Long> {
 
-    List<Document> findBySubmitter(String submitter);
+    List<Document> findBySubmitter(Long submitter);
 
-    Optional<Document> findBySubmitterAndUuid(String submitter, String uuid);
+    Optional<Document> findBySubmitterAndUuid(Long submitter, String uuid);
 }

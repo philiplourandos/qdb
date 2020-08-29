@@ -42,7 +42,7 @@ public class DocumentEndpoint {
             
     @PostMapping("/upload")
     public ResponseEntity add(@RequestParam final MultipartFile upload, 
-            @RequestParam("submitter") @NonNull final String submitter) {
+            @RequestParam("submitter") @NonNull final Long submitter) {
         final String filename = upload.getOriginalFilename();
 
         if (!filename.toLowerCase().endsWith(PDF_EXTENSION)) {
@@ -83,7 +83,7 @@ public class DocumentEndpoint {
     }
 
     @GetMapping("/submitter/{submitter}")
-    public ResponseEntity getDocumentsForSubmitter(@PathVariable("submitter") final String submitter) {
+    public ResponseEntity getDocumentsForSubmitter(@PathVariable("submitter") final Long submitter) {
         final List<Document> docs = docRepo.findBySubmitter(submitter);
 
         if (docs.isEmpty()) {
@@ -95,7 +95,7 @@ public class DocumentEndpoint {
 
     @DeleteMapping("/gprs/{submitter}/{uuid}")
     @Transactional
-    public ResponseEntity removeDocument(@NonNull @PathVariable("submitter") final String submitter, 
+    public ResponseEntity removeDocument(@NonNull @PathVariable("submitter") final Long submitter, 
             @NonNull @PathVariable("uuid") final String uuid) {
         final Optional<Document> found = docRepo.findBySubmitterAndUuid(submitter, uuid);
 
