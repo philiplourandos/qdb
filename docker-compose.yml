@@ -1,0 +1,19 @@
+version: '3'
+services:
+    db:
+        image: oscarfonts/h2
+        container_name: db
+        ports:
+            - 1521:1521
+    cms:
+        image: qdb-cms:1.0.0-SNAPSHOT
+        ports:
+            - 9080:8080
+        depends_on:
+           - db
+    document:
+        image: qdb-document-upload:1.0.0-SNAPSHOT
+        ports:
+            - 9081:8080
+        depends_on:
+            - db
