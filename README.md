@@ -32,9 +32,26 @@ Please let me know if they have any doubts, questions or concerns.
 
 # Software Prerequistes
 
-* Maven 3.6.3
-* Java 14
+* [Maven 3.6.3](http://maven.apache.org)
+* [Java 14](https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk)
+* [Docker 19.03.12](https://www.docker.com/get-started)
+* [HTTPie](https://httpie.org/)
 
 # Compiling
 
-`mvn clean package`
+There is a shell script called `build.sh` that will:
+
+* Build the docker container of h2 database
+* Build the projects with maven and create the docker images for the `cms` and `document-upload` service
+
+# Startup
+
+There is a `docker-compose.yml` in the root of the project. Once the `build.sh` has been run you can use:
+
+`docker-compose up`
+
+To start: h2, cms and document-upload
+
+# Testing
+
+There is a `qa/test.sh` that will use HTTPie to call the various REST webservices.
