@@ -26,6 +26,20 @@ echo '====================================================='
 
 DOCUMENT_RETRIEVAL_RESPONSE=$(http http://localhost:9081/document/submitter/1023)
 
-POST_ID=$(echo "${DOCUMENT_RETRIEVAL_RESPONSE}" | jq '.documents[0].post_id')
+POST_ID=$(echo "${DOCUMENT_RETRIEVAL_RESPONSE}" | jq '.documents[0].postId')
 
-echo "Post ID: ${POST_ID}"
+echo '====================================================='
+echo "Retrieve the post for post id: ${POST_ID}"
+echo '====================================================='
+
+POST_RESPONSE=$(http https://jsonplaceholder.typicode.com/post/$POST_ID)
+
+# Not sure why this is coming out as: {} because I can see on openfeign the response request.
+echo "Add post response from placeholder: ${POST_RESPONSE}"
+
+echo '====================================================='
+echo 'Create comment'
+echo '====================================================='
+
+COMMENT_PAYLOAD=$(cat comment.json | sed "s/ID/$POST_ID/g")
+http -v POST http://localhost:9080/cms/comment body="$COMMENT_PAYLOAD"
