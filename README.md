@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/philiplourandos/qdb.svg?branch=master)](https://travis-ci.com/philiplourandos/qdb)
+![Build](https://github.com/philiplourandos/qdb/workflows/Build/badge.svg)
 # Requirement
 
 ```
