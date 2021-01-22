@@ -33,7 +33,7 @@ Please let me know if they have any doubts, questions or concerns.
 # Software Prerequistes
 
 * [Maven 3.6.3](http://maven.apache.org)
-* [Java 14](https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk)
+* [Java 15](https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk)
 * [Docker 19.03.12](https://www.docker.com/get-started)
 * [HTTPie](https://httpie.org/)
 
