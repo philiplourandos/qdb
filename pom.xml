@@ -15,11 +15,11 @@
     </modules>
     
     <properties>
-        <java.version>16</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>2.5.4</spring.boot.version>
+        <spring.boot.version>2.5.5</spring.boot.version>
     </properties>
 
     <dependencyManagement>
@@ -34,7 +34,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2020.0.3</version>
+                <version>2020.0.4</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
