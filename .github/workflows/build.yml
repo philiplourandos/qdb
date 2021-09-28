@@ -12,7 +12,7 @@ jobs:
       - name: setup env.
         uses: actions/setup-java@v1
         with:
-          java-version: 16
+          java-version: 17
       - name: package
         run: mvn -B clean package
       - name: verify
